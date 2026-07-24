@@ -1,0 +1,58 @@
+package sk.tuke.gamestudio.server.service;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import sk.tuke.gamestudio.entity.TaptilesUser;
+import sk.tuke.gamestudio.repository.UserRepository;
+import sk.tuke.gamestudio.server.dto.RegisterUserDto;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class UserService {
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    @Transactional
+    public TaptilesUser register(RegisterUserDto dto) {
+        TaptilesUser user = new TaptilesUser();
+        user.setUsername(dto.getUsername());
+        user.setEmail(dto.getEmail());
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        return userRepository.save(user);
+    }
+
+    @Transactional
+    public void recordGameResult(String username, int points, int level) {
+        TaptilesUser user = userRepository.findByUsername(username).orElseThrow(() -> new IllegalStateException("Authenticated user not found: " + username));
+        // Unlock next level after completing current one.
+        user.recordCompletedGame(points, level);
+    }
+
+    @Transactional(readOnly = true)
+    public boolean usernameExists(String username) {
+        return userRepository.existsByUsername(username);
+    }
+
+    @Transactional(readOnly = true)
+    public boolean emailExists(String email) {
+        return userRepository.existsByEmail(email);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<TaptilesUser> findByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
+
+    @Transactional(readOnly = true)
+    public List<TaptilesUser> getLeaderboard() {
+        return userRepository.findTop10ByGamesPlayedGreaterThanOrderByTotalScoreDescBestScoreDescGamesPlayedDesc(0);
+    }
+}

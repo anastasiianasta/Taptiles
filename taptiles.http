@@ -1,0 +1,67 @@
+###
+### SCORE - GET before
+GET http://localhost:8080/api/score/taptiles
+Accept: application/json
+
+###
+
+### SCORE - POST
+POST http://localhost:8080/api/score
+Content-Type: application/json
+
+{
+  "game": "taptiles",
+  "player": "Nana",
+  "points": 100,
+  "playedOn": "2026-04-10T19:30:00"
+}
+
+###
+
+### SCORE - GET
+GET http://localhost:8080/api/score/taptiles
+Accept: application/json
+
+###
+
+### COMMENT - POST
+POST http://localhost:8080/api/comment
+Content-Type: application/json
+
+{
+  "game": "taptiles",
+  "player": "Nana",
+  "comment": "Super!",
+  "commentedOn": "2026-04-10T20:10:00"
+}
+
+###
+
+### COMMENT - GET
+GET http://localhost:8080/api/comment/taptiles
+Accept: application/json
+
+###
+
+### RATING - POST
+POST http://localhost:8080/api/rating
+Content-Type: application/json
+
+{
+  "game": "taptiles",
+  "player": "Nana",
+  "rating": 5,
+  "ratedOn": "2026-04-10T20:20:00"
+}
+
+###
+
+### RATING - GET average
+GET http://localhost:8080/api/rating/taptiles
+Accept: application/json
+
+###
+
+### RATING - GET player
+GET http://localhost:8080/api/rating/taptiles/Nana
+Accept: application/json
